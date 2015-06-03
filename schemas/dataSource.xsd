@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://edu.ohsu.ccc/dataSource/xml"
+           targetNamespace="http://edu.ohsu.ccc/dataSource/xml"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
+	<xs:annotation>
+		<xs:documentation xml:lang="en">
+            Describes a specific table from a LabKey Server instance from which to load data.
+            Contains the list of fields and aliases, if necessary.
+        </xs:documentation>
+	</xs:annotation>
+
+    <xs:element name="dataSource" type="dataSourceType"/>
+
+    <xs:complexType name="dataSourceType">
+        <xs:sequence>
+            <xs:element name="columns" type="columnsType"/>
+            <xs:element name="labkeyInstances" type="labkeyInstancesType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="columnsType">
+        <xs:choice minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="column" type="xs:string"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="labkeyInstancesType">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="labkeyInstance" type="labkeyInstance"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="labkeyInstance">
+        <xs:all>
+            <xs:element name="baseUrl" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The base server URL of the source LabKey Server, which should include the context path, if applicable</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="containerPath" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The full container path of the source folder</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="schemaName" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The schemaName of the source table</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="queryName" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The queryName of the source table</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="columnMappings" type="columnMappings" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="columnMappings">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="columnMapping" type="columnMapping"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="columnMapping">
+        <xs:attribute name="columnName" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:minLength value="1"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="fieldKey" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:minLength value="1"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+</xs:schema>

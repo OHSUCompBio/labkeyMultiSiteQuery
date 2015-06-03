@@ -1,0 +1,66 @@
+<project name="lk_ccc" basedir="." default="build">
+
+    <property name="source.dir" value="${basedir}/src"/>
+    <property name="build.dir" value="${basedir}/build"/>
+    <property name="build.classes.dir" value="${build.dir}/classes"/>
+    <property name="build.dist.dir" value="${build.dir}/dist"/>
+    <property name="build.jar.name" value="labkeyMultiSiteQuery.jar"/>
+    <property name="manifest.file" value="${build.dir}/MANIFEST.MF"/>
+
+    <property name="main.class" value="edu.ohsu.ccc.Main"/>
+
+    <path id="component.class.path">
+        <fileset dir="lib" includes="*.jar"/>
+    </path>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${build.dist.dir}"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${build.classes.dir}"/>
+        <javac srcdir="${source.dir}" destdir="${build.classes.dir}"
+               classpathref="component.class.path"
+               target="1.7"
+               source="1.7"
+               debug="true"/>
+    </target>
+
+    <target name="build" depends="clean,build_schemas,compile">
+        <mkdir dir="${build.dist.dir}"/>
+
+        <manifest file="${manifest.file}" >
+            <attribute name="Main-Class" value="${main.class}" />
+        </manifest>
+
+        <jar destfile="${build.dist.dir}/${build.jar.name}"
+             basedir="${build.dir}"
+             manifest="${manifest.file}">
+            <fileset dir="${build.classes.dir}" includes="**/*.class" />
+            <zipgroupfileset dir="lib" includes="**/*.jar" />
+        </jar>
+    </target>
+
+    <path id="schemas.compile.class.path">
+        <fileset dir="lib">
+            <include name="xbean.jar"/>
+        </fileset>
+    </path>
+
+    <taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean" classpathref="schemas.compile.class.path"/>
+
+    <target name="build_schemas">
+        <property name="xmlbean.classes" value="${build.dir}/xb"/>
+        <mkdir dir="${xmlbean.classes}" />
+        <delete dir="lib/schemas.jar"/>
+        <xmlbean
+                schema="schemas"
+                srcgendir="${build.dir}/xb"
+                classgendir="${xmlbean.classes}"
+                classpathref="schemas.compile.class.path"
+                failonerror="true"/>
+
+        <jar jarfile="lib/schemas.jar" basedir="${xmlbean.classes}" />
+    </target>
+</project>

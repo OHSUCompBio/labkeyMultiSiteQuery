@@ -1,0 +1,28 @@
+<dataSource xmlns="http://edu.ohsu.ccc/dataSource/xml">
+    <columns>
+        <column>entityid</column>
+        <column>name</column>
+    </columns>
+    <labkeyInstances>
+        <labkeyInstance>
+            <baseUrl>http://localhost:8080/labkey</baseUrl>
+            <containerPath>home</containerPath>
+            <schemaName>core</schemaName>
+            <queryName>containers</queryName>
+            <!--These are optional, if blank columns will be queried using their local name-->
+            <!--<columnMappings>-->
+            <!--</columnMappings>-->
+        </labkeyInstance>
+        <labkeyInstance>
+            <baseUrl>http://localhost:8080/labkey</baseUrl>
+            <containerPath>home</containerPath>
+            <schemaName>core</schemaName>
+            <queryName>users</queryName>
+            <!--These allow for the remote table to use different column names from the TSV we create-->
+            <columnMappings>
+                <columnMapping columnName="entityid" fieldKey="userid"/>
+                <columnMapping columnName="name" fieldKey="displayName"/>
+            </columnMappings>
+        </labkeyInstance>
+    </labkeyInstances>
+</dataSource>
