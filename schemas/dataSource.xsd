@@ -34,6 +34,16 @@
 
     <xs:complexType name="labkeyInstance">
         <xs:all>
+            <xs:element name="name" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The user-facing name to use for this site.  This would only be shown if includeSiteNameInOutput is set</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
             <xs:element name="baseUrl" minOccurs="1" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation>The base server URL of the source LabKey Server, which should include the context path, if applicable</xs:documentation>

@@ -27,6 +27,7 @@ public class Main
         options.addOption(OptionBuilder.withArgName("username").withLongOpt("username").hasArg().withDescription("the valid username for the LabKey Server(s)").create("u"));
         options.addOption(OptionBuilder.withArgName("password").withLongOpt("password").hasArg().withDescription("the valid password for the LabKey Server(s)").create("p"));
         options.addOption(OptionBuilder.withArgName("noHeaders").withLongOpt("noHeaders").hasArg(false).withDescription("if set, no headers will be written to the output").create("nh"));
+        options.addOption(OptionBuilder.withArgName("includeSiteNameInOutput").withLongOpt("includeSiteNameInOutput").hasArg(false).withDescription("if set, the name of the source site will be appended as the first column").create("sn"));
         options.addOption(OptionBuilder.hasOptionalArgs().withArgName("filterExpression").withLongOpt("filter").withType(String.class).withDescription("a filter expression that will be passed to the server, in the form 'fieldName~eq=filterTerm'.  More than one filter can be accepted").create("f"));
 
         try
@@ -58,7 +59,7 @@ public class Main
                 //TODO: should credentials be read from a file, like .netrc?
                 String[] filters = line.getOptionValues("f");
 
-                m.executeQuery(line.hasOption("o") ? new File(line.getOptionValue("output")) : null, line.getOptionValue("username"), line.getOptionValue("password"), line.hasOption("nh"), filters);
+                m.executeQuery(line.hasOption("o") ? new File(line.getOptionValue("output")) : null, line.getOptionValue("username"), line.getOptionValue("password"), line.hasOption("nh"), line.hasOption("sn"), filters);
             }
         }
         catch (Exception e)

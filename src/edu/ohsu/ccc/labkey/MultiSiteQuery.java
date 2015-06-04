@@ -46,12 +46,19 @@ public class MultiSiteQuery
         _columns.addAll(Arrays.asList(doc.getDataSource().getColumns().getColumnArray()));
     }
 
-    public void executeQuery(File output, String userName, String password, boolean hideHeaders, String[] filterStrings) throws Exception
+    public void executeQuery(File output, String userName, String password, boolean hideHeaders, boolean includeSiteName, String[] filterStrings) throws Exception
     {
         try (CSVWriter writer = new CSVWriter(output == null ? new BufferedWriter(new OutputStreamWriter(System.out)) : new FileWriter(output), '\t', CSVWriter.NO_QUOTE_CHARACTER))
         {
             if (!hideHeaders) {
-                writer.writeNext(_columns.toArray(new String[_columns.size()]));
+                List<String> toWrite = new ArrayList<>();
+                if (includeSiteName)
+                {
+                    toWrite.add("SiteName");
+                }
+                toWrite.addAll(_columns);
+
+                writer.writeNext(toWrite.toArray(new String[toWrite.size()]));
             }
 
             for (LabKeyDataSource ds : _dataSources)
@@ -79,6 +86,11 @@ public class MultiSiteQuery
                 {
                     r = new CaseInsensitiveHashMap<>(r);
                     List<String> row = new ArrayList<>();
+                    if (includeSiteName)
+                    {
+                        row.add(ds.getName());
+                    }
+
                     for (String colName : _columns)
                     {
                         if (r.get(ds.resolveColumnName(colName)) != null)
@@ -99,6 +111,7 @@ public class MultiSiteQuery
 
     private class LabKeyDataSource
     {
+        private String _name;
         private String _baseUrl;
         private String _containerPath;
         private String _schemaName;
@@ -107,6 +120,7 @@ public class MultiSiteQuery
 
         public LabKeyDataSource(LabkeyInstance ds)
         {
+            _name = ds.getName();
             _baseUrl = ds.getBaseUrl();
             _containerPath = ds.getContainerPath();
             _schemaName = ds.getSchemaName();
@@ -138,6 +152,14 @@ public class MultiSiteQuery
             return _queryName;
         }
 
+        public String getName() {
+            return _name;
+        }
+
+        public void setName(String name) {
+            _name = name;
+        }
+
         public String resolveColumnName(String colName) {
             return _aliasMap.containsKey(colName) ? _aliasMap.get(colName) : colName;
         }
@@ -147,7 +169,6 @@ public class MultiSiteQuery
             List<Filter> ret = new ArrayList<>();
             for (String filterStr : filterStrings)
             {
-                System.out.print("filter: " + filterStr);
                 if (filterStr == null || "".equals(filterStr.trim()))
                 {
                     return null;
